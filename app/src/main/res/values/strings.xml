@@ -10,4 +10,12 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string name="your_web_client_id">132351541693-kfjvujij2pi17sb88f4sse0nj0lqvms9.apps.googleusercontent.com</string>
+    <string name="treinar">Treinar</string>
+    <string name="iniciar_exercicio">Iniciar Exercício</string>
+    <string name="iniciar">Iniciar</string>
+    <string name="timer">00:00:00</string>
+    <string name="parar_exercicio">Parar Exercício</string>
+
 </resources>

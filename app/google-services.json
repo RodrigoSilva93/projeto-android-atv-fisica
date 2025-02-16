@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "132351541693",
+    "project_id": "app-fitness-3e991",
+    "storage_bucket": "app-fitness-3e991.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132351541693:android:19a41aa017398a30a492d4",
+        "android_client_info": {
+          "package_name": "br.edu.utfpr.appfitness"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoiv8kGM_G6bcpYZy5W2AgZS4BpB19Iqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
