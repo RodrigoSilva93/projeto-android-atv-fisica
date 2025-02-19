@@ -1,5 +1,6 @@
 package br.edu.utfpr.appfitness
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -17,6 +18,7 @@ import br.edu.utfpr.appfitness.databinding.ActivityTrainingBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.Locale
 
 class TrainingActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityTrainingBinding
@@ -31,8 +33,6 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_training)
 
         binding = ActivityTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -44,8 +44,8 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
         registerSensor(Sensor.TYPE_HEART_RATE)
 
         binding.btnStartStop.setOnClickListener {
-            if (isRunning)  stopTraining()
-            else startTraining()
+            if (isRunning)  pararTreino()
+            else iniciarTreino()
         }
     }
 
@@ -75,20 +75,20 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
 
-    private fun startTraining() {
+    private fun iniciarTreino() {
         isRunning = true
         startTime = SystemClock.elapsedRealtime()
         binding.btnStartStop.text = getString(R.string.parar_exercicio)
         handler.post(timerRunnable)
     }
 
-    private fun stopTraining() {
+    private fun pararTreino() {
         isRunning = false
         binding.btnStartStop.text = getString(R.string.iniciar_exercicio)
         handler.removeCallbacks(timerRunnable)
 
-        val treinoCategoria = calcularPontuacao()
-        Toast.makeText(this, "Treino finalizado: $treinoCategoria", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Treino finalizado", Toast.LENGTH_LONG).show()
+        salvar()
     }
 
     private val timerRunnable = object: Runnable {
@@ -97,19 +97,22 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
             val seconds = (elapsedMillis / 1000).toInt()
             val minutes = seconds / 60
             val hours = minutes / 60
-            binding.tvTimer.text = String.format("%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
+            binding.tvTimer.text = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
             handler.postDelayed(this, 1000)
         }
     }
 
-    private fun calcularPontuacao(): String {
-        val accAvg = accelerometerValues.average().toFloat()
-        val gyroAvg = gyroscopeValues.average().toFloat()
-        val heartAvg = heartRateValues.average().toFloat()
+    private fun calcularPontuacaoNumerica(): Float {
+        val accAvg = if (accelerometerValues.isNotEmpty()) accelerometerValues.average().toFloat() else 0f
+        val gyroAvg = if (gyroscopeValues.isNotEmpty()) gyroscopeValues.average().toFloat() else 0f
+        val heartAvg = if (heartRateValues.isNotEmpty()) heartRateValues.average().toFloat() else 0f
 
         //pontuação varia entre 0 a 100 de acordo com a média das listas
-        val score = ((accAvg + gyroAvg + heartAvg) / 3 * 100).coerceIn(0f, 100f)
+        return ((accAvg + gyroAvg + heartAvg) / 3 * 100).coerceIn(0f, 100f)
 
+    }
+
+    private fun categorizarTreino(score: Float): String {
         return when {
             score < 30 -> "Treino Casual"
             score < 70 -> "Treino Moderado"
@@ -118,15 +121,24 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun salvar() {
+        val score = calcularPontuacaoNumerica()
         val treino = TrainingSession(
             userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
             duracao = binding.tvTimer.text.toString(),
-            intensidade = calcularPontuacao()
+            intensidade = categorizarTreino(score),
+            timestamp = System.currentTimeMillis(),
+            pontuacao = score
         )
 
-        Firebase.firestore.collection("Atividade")
+        Firebase.firestore.collection("Pessoa")
+            .document(FirebaseAuth.getInstance().currentUser?.uid ?: "")
+            .collection("Atividade")
             .add(treino)
-            .addOnSuccessListener { Log.d("Training", "Treino salvo!") }
+            .addOnSuccessListener {
+                Log.d("Training", "Treino salvo!")
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
             .addOnFailureListener { e -> Log.e("Training", "Erro ao salvar", e) }
     }
 

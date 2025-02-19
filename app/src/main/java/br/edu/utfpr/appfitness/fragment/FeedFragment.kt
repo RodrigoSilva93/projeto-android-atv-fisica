@@ -1,5 +1,6 @@
 package br.edu.utfpr.appfitness.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.edu.utfpr.appfitness.ProfileActivity
 import br.edu.utfpr.appfitness.TrainingActivity
 import br.edu.utfpr.appfitness.adapter.FeedAdapter
 import br.edu.utfpr.appfitness.data.TrainingSession
@@ -21,6 +23,10 @@ class FeedFragment: Fragment() {
 
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
+
+    companion object {
+        private const val REQUEST_CODE_TRAINING = 1001
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +44,7 @@ class FeedFragment: Fragment() {
             .collection("Pessoa")
             .document(FirebaseAuth.getInstance().uid!!)
             .collection("Atividade")
-            .orderBy("data", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
 
         val options = FirestoreRecyclerOptions.Builder<TrainingSession>()
             .setQuery(query, TrainingSession::class.java)
@@ -46,7 +52,7 @@ class FeedFragment: Fragment() {
 
         binding.btnStartTraining.setOnClickListener {
             val intent = Intent(requireContext(), TrainingActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, REQUEST_CODE_TRAINING)
         }
 
         adapter = FeedAdapter(options)
@@ -54,14 +60,33 @@ class FeedFragment: Fragment() {
         binding.recyclerView.adapter = adapter
 
         binding.btnStartTraining.setOnClickListener {
-            val intent = Intent(requireContext(), TrainingActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(requireContext(), TrainingActivity::class.java))
         }
+
+        binding.btnPerfil.setOnClickListener {
+            startActivity(Intent(requireContext(), ProfileActivity::class.java))
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_TRAINING && resultCode == Activity.RESULT_OK)
+            atualizarLista()
+    }
+
+    private fun atualizarLista() {
+        adapter.stopListening()
+        adapter.startListening()
     }
 
     override fun onStart() {
         super.onStart()
         adapter.startListening()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        atualizarLista()
     }
 
     override fun onStop() {
