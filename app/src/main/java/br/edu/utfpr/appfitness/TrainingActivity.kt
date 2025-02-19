@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.Locale
+import kotlin.math.log10
 
 class TrainingActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityTrainingBinding
@@ -28,7 +29,6 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var sensorManager: SensorManager
     private var accelerometerValues = mutableListOf<Float>()
-    private var gyroscopeValues = mutableListOf<Float>()
     private var heartRateValues = mutableListOf<Float>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,18 +59,14 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
         event?.let {
             when (it.sensor.type) {
                 Sensor.TYPE_ACCELEROMETER -> addSensorData(accelerometerValues, it.values)
-                Sensor.TYPE_GYROSCOPE -> addSensorData(gyroscopeValues, it.values)
                 Sensor.TYPE_HEART_RATE -> addSensorData(heartRateValues, it.values)
             }
         }
     }
 
     private fun addSensorData(list: MutableList<Float>, values: FloatArray) {
-        //os sensores serão anotados em uma lista, cada item será adicionado após
-        //realizar a média de 300 leituras
         val avg = values.average().toFloat()
         list.add(avg)
-        if (list.size > 300) list.removeAt(0)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { }
@@ -103,13 +99,27 @@ class TrainingActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun calcularPontuacaoNumerica(): Float {
-        val accAvg = if (accelerometerValues.isNotEmpty()) accelerometerValues.average().toFloat() else 0f
-        val gyroAvg = if (gyroscopeValues.isNotEmpty()) gyroscopeValues.average().toFloat() else 0f
-        val heartAvg = if (heartRateValues.isNotEmpty()) heartRateValues.average().toFloat() else 0f
+        val maxReadings = maxOf(accelerometerValues.size, heartRateValues.size)
 
-        //pontuação varia entre 0 a 100 de acordo com a média das listas
-        return ((accAvg + gyroAvg + heartAvg) / 3 * 100).coerceIn(0f, 100f)
+        val accAvgList = if (accelerometerValues.size == maxReadings) {
+            accelerometerValues.chunked(1000).map { it.average().toFloat() }
+        } else {
+            accelerometerValues.chunked(500).map { it.average().toFloat() }
+        }
 
+        val heartAvgList = if (heartRateValues.size == maxReadings) {
+            heartRateValues.chunked(1000).map { it.average().toFloat() }
+        } else {
+            heartRateValues.chunked(500).map { it.average().toFloat() }
+        }
+
+        val accSum = if (accAvgList.sum() < 1) 0f else accAvgList.sum()
+        val heartSum = if (heartAvgList.sum() < 1) 0f else heartAvgList.sum()
+
+        val numerator = accSum + heartSum
+        val denominator = log10(accSum + heartSum)
+
+        return (numerator / denominator)
     }
 
     private fun categorizarTreino(score: Float): String {
