@@ -76,12 +76,15 @@ class FeedFragment: Fragment() {
 
     private fun atualizarLista() {
         adapter.stopListening()
+        adapter.notifyDataSetChanged()
         adapter.startListening()
     }
 
     override fun onStart() {
         super.onStart()
-        adapter.startListening()
+        if (::adapter.isInitialized) {
+            adapter.startListening()
+        }
     }
 
     override fun onResume() {
@@ -91,7 +94,9 @@ class FeedFragment: Fragment() {
 
     override fun onStop() {
         super.onStop()
-        adapter.stopListening()
+        if (::adapter.isInitialized) {
+            adapter.stopListening()
+        }
     }
 
     override fun onDestroyView() {
