@@ -17,7 +17,7 @@
     <Button
         android:id="@+id/btnStartTraining"
         android:layout_width="175dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_margin="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
@@ -28,7 +28,7 @@
     <Button
         android:id="@+id/btnPerfil"
         android:layout_width="175dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="84dp"
         android:layout_marginBottom="16dp"

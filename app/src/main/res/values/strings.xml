@@ -26,5 +26,10 @@
     <string name="registrar">Registrar</string>
     <string name="cadastro">Cadastro</string>
     <string name="perfil">Perfil</string>
+    <string name="sair">Sair</string>
+    <string name="excluir_conta">Excluir Conta</string>
+    <string name="dados_pessoais">Dados Pessoais</string>
+    <string name="entrar">Entrar</string>
+    <string name="registrar_se">Registrar-se</string>
 
 </resources>

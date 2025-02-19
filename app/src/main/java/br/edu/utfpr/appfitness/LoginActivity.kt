@@ -3,12 +3,14 @@ package br.edu.utfpr.appfitness
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import br.edu.utfpr.appfitness.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.SignInButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
@@ -21,14 +23,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var auth: FirebaseAuth
-    private lateinit var binding: ActivityLoginBinding
+
     private lateinit var btGoogleSignIn: SignInButton
+    private lateinit var emailEditText: TextInputEditText
+    private lateinit var senhaEditText: TextInputEditText
+    private lateinit var loginButton: Button
+    private lateinit var registrarButton: Button
 
     private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_login)
 
         auth = Firebase.auth
@@ -39,6 +44,10 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         btGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
+        emailEditText = findViewById(R.id.textEmail)
+        senhaEditText = findViewById(R.id.textSenha)
+        loginButton = findViewById(R.id.btnLogin)
+        registrarButton = findViewById(R.id.btnRegistrar)
 
         oneTapClient = Identity.getSignInClient(this)
 
@@ -53,8 +62,27 @@ class LoginActivity : AppCompatActivity() {
 
         btGoogleSignIn.setOnClickListener { tratarLogin() }
 
-        binding.textRegistro.setOnClickListener {
+        registrarButton.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        loginButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
+            val password = senhaEditText.text.toString().trim()
+
+            if (email.isEmpty()) {
+                emailEditText.error = "Preencha o email"
+                emailEditText.requestFocus()
+                return@setOnClickListener
+            }
+
+            if (password.isEmpty()) {
+                senhaEditText.error = "Preencha a senha"
+                senhaEditText.requestFocus()
+                return@setOnClickListener
+            }
+
+            loginUsuario(email, password)
         }
     }
 
@@ -62,6 +90,24 @@ class LoginActivity : AppCompatActivity() {
         super.onStart()
 
 //        var currentUser = auth.currentUser
+    }
+
+    private fun loginUsuario(email: String, senha: String) {
+        auth.signInWithEmailAndPassword(email, senha)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("LOGIN", "Login bem-sucedido: ${auth.currentUser?.email}")
+                    Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.e("LOGIN", "Erro ao fazer login", task.exception)
+                    Toast.makeText(this, "Erro ao fazer login. Verifique seu e-mail e senha.", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun tratarLogin() {
@@ -98,7 +144,8 @@ class LoginActivity : AppCompatActivity() {
                             val usuario = hashMapOf(
                                 "uid" to (user?.uid ?: ""),
                                 "nome" to (user?.displayName ?: ""),
-                                "email" to (user?.email ?: "")
+                                "email" to (user?.email ?: ""),
+                                "loginMethod" to "google"
                             )
 
                             db.collection("Pessoa").document(user!!.uid)
