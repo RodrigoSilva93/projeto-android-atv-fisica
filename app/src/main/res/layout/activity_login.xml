@@ -7,10 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
     tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="61dp">
+    tools:layout_editor_absoluteY="109dp">
 
     <TextView
-        android:id="@+id/text_titulo"
+        android:id="@+id/textTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="92dp"
@@ -31,10 +31,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.545"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_titulo">
+        app:layout_constraintTop_toBottomOf="@+id/textTitulo">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/text_email"
+            android:id="@+id/textEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email" />
@@ -53,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_layout_email">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/text_senha"
+            android:id="@+id/textSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/senha"
@@ -62,10 +62,10 @@
 
 
     <TextView
-        android:id="@+id/text_registro"
+        android:id="@+id/textRegistro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/texto_novo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -76,20 +76,42 @@
         android:id="@+id/text_sugestao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="24dp"
         android:text="@string/texto_opcao"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_registro" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_sugestao" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/entrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.175"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textRegistro" />
+
+    <Button
+        android:id="@+id/btnRegistrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/registrar_se"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.827"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textRegistro" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
