@@ -12,6 +12,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var btGoogleSignIn: SignInButton
 
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +32,12 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         auth = Firebase.auth
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
         btGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
 
         oneTapClient = Identity.getSignInClient(this)
@@ -45,6 +52,10 @@ class LoginActivity : AppCompatActivity() {
             ).build()
 
         btGoogleSignIn.setOnClickListener { tratarLogin() }
+
+        binding.textRegistro.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
     }
 
     override fun onStart() {
@@ -81,17 +92,28 @@ class LoginActivity : AppCompatActivity() {
             idToken != null -> {
                 val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
                 auth.signInWithCredential(firebaseCredential)
-                    .addOnCompleteListener(this) {task ->
+                    .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
-                            Log.d("LOGIN", "signInWithCredential:success")
                             val user = auth.currentUser
+                            val usuario = hashMapOf(
+                                "uid" to (user?.uid ?: ""),
+                                "nome" to (user?.displayName ?: ""),
+                                "email" to (user?.email ?: "")
+                            )
 
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
+                            db.collection("Pessoa").document(user!!.uid)
+                                .set(usuario, SetOptions.merge())
+                                .addOnSuccessListener {
+                                    Log.d("LOGIN", "Usuário criado com sucesso.")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("LOGIN", "Erro ao criar usuário", e)
+                                }
+
+                            startActivity(Intent(this, MainActivity::class.java))
                             finish()
-                        } else {
-                            Log.w("LOGIN", "signInWithCredential:failure", task.exception)
                         }
+                        else Log.w("LOGIN", "signInWithCredential:failure", task.exception)
                     }
             }
             else -> {

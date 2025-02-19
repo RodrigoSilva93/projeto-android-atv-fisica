@@ -17,5 +17,14 @@
     <string name="iniciar">Iniciar</string>
     <string name="timer">00:00:00</string>
     <string name="parar_exercicio">Parar Exercício</string>
+    <string name="email">Email</string>
+    <string name="senha">Senha</string>
+    <string name="fitness">Fitness</string>
+    <string name="texto_opcao">Ou faça login com uma das opções abaixo:</string>
+    <string name="texto_novo">Novo por aqui? Registre-se.</string>
+    <string name="nome">Nome</string>
+    <string name="registrar">Registrar</string>
+    <string name="cadastro">Cadastro</string>
+    <string name="perfil">Perfil</string>
 
 </resources>
