@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppFitness">
         <activity
+            android:name=".EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
 
@@ -27,7 +30,7 @@
         <activity
             android:name=".TrainingActivity"
             android:exported="false"
-			android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
