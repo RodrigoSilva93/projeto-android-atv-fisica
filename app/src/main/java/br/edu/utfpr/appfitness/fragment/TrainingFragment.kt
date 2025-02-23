@@ -14,16 +14,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import br.edu.utfpr.appfitness.R
 import br.edu.utfpr.appfitness.data.TrainingSession
 import br.edu.utfpr.appfitness.databinding.FragmentTrainingBinding
+import br.edu.utfpr.appfitness.fragment.group.SelectGroupDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.util.Locale
 import kotlin.math.log10
 
@@ -96,8 +96,21 @@ class TrainingFragment : Fragment(), SensorEventListener {
         binding.btnStartStop.text = getString(R.string.iniciar_exercicio)
         handler.removeCallbacks(timerRunnable)
 
-        Toast.makeText(requireContext(), "Treino finalizado", Toast.LENGTH_LONG).show()
-        salvar()
+        AlertDialog.Builder(requireContext())
+            .setTitle("Compartilhar treino")
+            .setMessage("Deseja compartilhar este treino em um grupo?")
+            .setPositiveButton("Sim") { _, _ ->
+                Log.d("AlertDialog", "Compartilhar no grupo entrou")
+                val dialog = SelectGroupDialogFragment()
+
+                dialog.onGroupsSelected = { selectedGroups ->
+                    Log.d("AlertDialog", "Grupos selecionados: $selectedGroups")
+                    salvar(true, selectedGroups)
+                }
+                dialog.show(parentFragmentManager, "SelectGroupDialog")
+            }
+            .setNegativeButton("Não") { _, _ -> salvar(false) }
+            .show()
     }
 
     private val timerRunnable = object: Runnable {
@@ -143,43 +156,64 @@ class TrainingFragment : Fragment(), SensorEventListener {
         }
     }
 
-    private fun salvar() {
-        val selectedGroupName: String? = null //temporário, implementar grupos de usuários
+    private fun salvar(compartilharNoGrupo: Boolean, selectedGroups: List<String> = emptyList()) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        Log.d("TrainingFragment", "Compartilhar no grupo: $compartilharNoGrupo, Grupos: $selectedGroups")
 
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        val userRef = Firebase.firestore.collection("Pessoa").document(userId.toString())
-
-        userRef.get()
-            .addOnSuccessListener() { document ->
-                if (!isAdded || isDetached || activity == null) {
-                    Log.w("Training", "Fragment não está ativo. Ignorando callback.")
-                    return@addOnSuccessListener
-                }
-
+        FirebaseFirestore.getInstance().collection("Pessoa")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
                 val score = calcularPontuacaoNumerica()
                 val treino = TrainingSession(
-                    userId = userId.toString(),
+                    userId = userId,
                     userName = document.getString("nome") ?: "",
-                    groupName = selectedGroupName ?: "",
                     duracao = binding.tvTimer.text.toString(),
                     intensidade = categorizarTreino(score),
                     timestamp = System.currentTimeMillis(),
                     pontuacao = score
                 )
 
-                Firebase.firestore.collection("Pessoa")
-                    .document(userId.toString())
+                // Salva no feed do usuário
+                FirebaseFirestore.getInstance().collection("Pessoa")
+                    .document(userId)
                     .collection("Atividade")
                     .add(treino)
                     .addOnSuccessListener {
-                        Log.d("Training", "Treino salvo!")
+                        if (compartilharNoGrupo) {
+                            // Compartilha o treino nos grupos selecionados
+                            for (groupId in selectedGroups) {
+                                Log.d("TrainingSelectDialog", "Compartilhando no grupo: $groupId, selecionados: $selectedGroups")
+                                FirebaseFirestore.getInstance().collection("Grupo")
+                                    .document(groupId)
+                                    .get()
+                                    .addOnSuccessListener { groupDocument ->
+                                        val groupName = groupDocument.getString("nome") ?: ""
+                                        val treinoComGrupo = treino.copy(groupName = groupName)
+                                        FirebaseFirestore.getInstance().collection("Grupo")
+                                            .document(groupId)
+                                            .collection("Atividade")
+                                            .add(treinoComGrupo)
+                                            .addOnSuccessListener {
+                                                Log.d("TrainingFragment", "Treino compartilhado no grupo: $groupName")
+                                            }
+                                            .addOnFailureListener { e ->
+                                                Log.e("TrainingFragment", "Erro ao compartilhar no grupo", e)
+                                            }
+                                    }
+                            }
+                            Toast.makeText(requireContext(), "Treino salvo e compartilhado!", Toast.LENGTH_SHORT).show()
+                        }
+                        else Toast.makeText(requireContext(), "Treino salvo!", Toast.LENGTH_SHORT).show()
+
                         navController.navigate(R.id.nav_home)
                     }
-                    .addOnFailureListener { e -> Log.e("Training", "Erro ao salvar", e) }
+                    .addOnFailureListener { e ->
+                        Log.e("Training", "Erro ao salvar", e)
+                    }
             }
             .addOnFailureListener { e ->
-                Log.e("TrainingFragment", "Erro ao recuperar nome usuário", e)
-                Toast.makeText(requireContext(), "Erro ao carregar dados do usuário.", Toast.LENGTH_SHORT).show()
+                Log.e("TrainingFragment", "Erro ao recuperar nome do usuário", e)
             }
     }
 

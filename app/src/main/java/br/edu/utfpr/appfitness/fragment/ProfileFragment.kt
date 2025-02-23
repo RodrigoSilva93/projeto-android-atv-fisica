@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import br.edu.utfpr.appfitness.LoginActivity
 import br.edu.utfpr.appfitness.R
+import br.edu.utfpr.appfitness.data.Group
 import br.edu.utfpr.appfitness.databinding.FragmentProfileBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -285,25 +286,72 @@ class ProfileFragment : Fragment() {
             }
     }
 
-    private fun excluirUsuarioFirebase(user: FirebaseUser?) {
-        val userId = user?.uid
+    private fun removerUsuarioDosGrupos(userId: String, onComplete: () -> Unit) {
+        FirebaseFirestore.getInstance().collection("Grupo")
+            .whereArrayContains("membros", userId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val batch = FirebaseFirestore.getInstance().batch()
+                for (document in querySnapshot.documents) {
+                    val grupoId = document.id
+                    val grupo = document.toObject(Group::class.java)
+                    if (grupo != null) {
+                        if (grupo.adminId == userId) batch.delete(document.reference)
+                        else {
+                            val novosMembros = grupo.membros.toMutableList().apply { remove(userId) }
+                            batch.update(document.reference, "membros", novosMembros)
+                        }
+                    }
+                }
+                batch.commit()
+                    .addOnSuccessListener {
+                        Log.d("ProfileFragment", "Usuário removido dos grupos com sucesso.")
+                        onComplete()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("ProfileFragment", "Erro ao remover usuário dos grupos", e)
+                        onComplete()
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ProfileFragment", "Erro ao buscar grupos do usuário", e)
+                onComplete()
+            }
 
-        if (userId != null) {
+    }
+
+    private fun excluirUsuarioFirebase(user: FirebaseUser?) {
+        val userId = user?.uid ?: return
+
+        removerUsuarioDosGrupos(userId) {
             excluirSubcolecao(userId, "Atividade") {
                 // Exclui os dados do Firestore
                 FirebaseFirestore.getInstance().collection("Pessoa")
                     .document(userId).delete()
                     .addOnSuccessListener {
-                        // Após excluir os dados do Firestore, exclui a conta do Firebase Authentication
+                        // Exclui a conta do Firebase Authentication
                         user.delete().addOnCompleteListener { deleteTask ->
                             if (deleteTask.isSuccessful) {
-                                Toast.makeText(requireContext(), "Conta excluída com sucesso.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Conta excluída com sucesso.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 startActivity(Intent(requireContext(), LoginActivity::class.java))
-                            }
-                            else Toast.makeText(requireContext(), "Erro ao excluir conta.", Toast.LENGTH_SHORT).show()
+                            } else Toast.makeText(
+                                requireContext(),
+                                "Erro ao excluir conta.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-                    .addOnFailureListener { e -> Log.e("ProfileFragment", "Erro ao excluir dados do Firestore", e) }
+                    .addOnFailureListener { e ->
+                        Log.e(
+                            "ProfileFragment",
+                            "Erro ao excluir dados do Firestore",
+                            e
+                        )
+                    }
             }
         }
     }

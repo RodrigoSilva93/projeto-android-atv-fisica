@@ -1,12 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp">
+    android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,46 +10,40 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvData"
+            android:id="@+id/tvTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
             android:layout_gravity="end"
-            android:paddingBottom="8dp"/>
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
-            android:id="@+id/tvUsuario"
+            android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:textSize="16sp"
-            android:paddingBottom="4dp"/>
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvGrupo"
+            android:id="@+id/tvDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:visibility="gone"
-            android:paddingBottom="4dp"/>
+            android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/tvDuracao"
+            android:id="@+id/tvIntensity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/tvIntensidade"
+            android:id="@+id/tvScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/tvPontuacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
