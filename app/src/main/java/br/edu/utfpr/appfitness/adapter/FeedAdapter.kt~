@@ -54,7 +54,10 @@ class FeedAdapter(private val postagens: List<TrainingSession>):
         holder.tvData.text = getRelativeTime(model.timestamp)
         holder.tvDuration.text = holder.itemView.context.getString(R.string.session_duration, model.duracao)
         holder.tvIntensity.text = holder.itemView.context.getString(R.string.session_type, model.intensidade)
+<<<<<<<<<<<<<<  ✨ Codeium Command 🌟 >>>>>>>>>>>>>>>>
         holder.tvPontuacao.text = holder.itemView.context.getString(R.string.session_score, String.format("%.2f", model.pontuacao))
+        holder.tvPontuacao.text = holder.itemView.context.getString(R.string.session_score, floor(model.pontuacao.toDouble()))
+<<<<<<<  13055d3c-ed7b-490f-a2ea-a3a6c82ec5f8  >>>>>>>
     }
 
     private fun getRelativeTime(timestamp: Long): String {

@@ -3,6 +3,14 @@
     <string name="action_settings">Settings</string>
 
     <string name="your_web_client_id">132351541693-kfjvujij2pi17sb88f4sse0nj0lqvms9.apps.googleusercontent.com</string>
+
+    <!-- TRAINING SESSION CONVERSION -->
+    <string name="session_name">%1$s postou:</string>
+    <string name="session_group">%1$s postou no grupo %2$s:</string>
+    <string name="session_duration">Tempo: %1$s</string>
+    <string name="session_type">Modalidade: %1$s</string>
+    <string name="session_score">Pontos: %1$s</string>
+
     <string name="treinar">Treinar</string>
     <string name="iniciar_exercicio">Iniciar Exercício</string>
     <string name="iniciar">Iniciar</string>
@@ -25,5 +33,12 @@
     <string name="editar_perfil">Editar Perfil</string>
     <string name="data_de_nascimento">Data de Nascimento</string>
     <string name="salvar">Salvar</string>
+    <string name="home">Home</string>
+    <string name="grupos">Grupos</string>
+    <string name="treino">Treino</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="editar">Editar</string>
+    <string name="informacoes_da_conta">Informações da Conta</string>
+    <string name="genero">Gênero</string>
 
 </resources>

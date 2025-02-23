@@ -36,6 +36,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        supportActionBar?.hide()
+
         auth = Firebase.auth
 
         val user = FirebaseAuth.getInstance().currentUser
@@ -86,12 +88,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-//        var currentUser = auth.currentUser
-    }
-
     private fun loginUsuario(email: String, senha: String) {
         auth.signInWithEmailAndPassword(email, senha)
             .addOnCompleteListener(this) { task ->
@@ -119,11 +115,10 @@ class LoginActivity : AppCompatActivity() {
                     0,0, null
                 )
             }
-            .addOnFailureListener(this) { e ->
-                e.localizedMessage?.let { Log.d("LOGIN", it) }
-            }
+            .addOnFailureListener(this) { e ->  e.localizedMessage?.let { Log.d("LOGIN", it) } }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -150,12 +145,8 @@ class LoginActivity : AppCompatActivity() {
 
                             db.collection("Pessoa").document(user!!.uid)
                                 .set(usuario, SetOptions.merge())
-                                .addOnSuccessListener {
-                                    Log.d("LOGIN", "Usuário criado com sucesso.")
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("LOGIN", "Erro ao criar usuário", e)
-                                }
+                                .addOnSuccessListener { Log.d("LOGIN", "Usuário criado com sucesso.") }
+                                .addOnFailureListener { e -> Log.w("LOGIN", "Erro ao criar usuário", e) }
 
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
@@ -163,9 +154,8 @@ class LoginActivity : AppCompatActivity() {
                         else Log.w("LOGIN", "signInWithCredential:failure", task.exception)
                     }
             }
-            else -> {
-                Log.d("LOGIN", "No ID token!")
-            }
+            else -> Log.d("LOGIN", "No ID token!")
+
         }
     }
 }

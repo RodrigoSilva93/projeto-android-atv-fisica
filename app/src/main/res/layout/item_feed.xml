@@ -15,13 +15,31 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/tvData"
+            android:id="@+id/tvUsuario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Data"
+            android:text="Usuário postou: "
             android:textStyle="bold"
             android:textSize="16sp"
             android:paddingBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/tvGrupo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Compartilhado no grupo: Grupo"
+            android:textSize="14sp"
+            android:visibility="gone"
+            android:paddingBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/tvData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Há x horas"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:paddingBottom="8dp"/>
 
         <TextView
             android:id="@+id/tvDuracao"

@@ -1,32 +1,25 @@
 package br.edu.utfpr.appfitness.fragment
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.edu.utfpr.appfitness.ProfileActivity
-import br.edu.utfpr.appfitness.TrainingActivity
 import br.edu.utfpr.appfitness.adapter.FeedAdapter
 import br.edu.utfpr.appfitness.data.TrainingSession
 import br.edu.utfpr.appfitness.databinding.FragmentFeedBinding
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 class FeedFragment: Fragment() {
     private lateinit var adapter: FeedAdapter
+    private val postagens = mutableListOf<TrainingSession>()
 
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
-
-    companion object {
-        private const val REQUEST_CODE_TRAINING = 1001
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,64 +33,103 @@ class FeedFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val query = FirebaseFirestore.getInstance()
-            .collection("Pessoa")
-            .document(FirebaseAuth.getInstance().uid!!)
-            .collection("Atividade")
-            .orderBy("timestamp", Query.Direction.DESCENDING)
+        val userId = FirebaseAuth.getInstance().uid!!
 
-        val options = FirestoreRecyclerOptions.Builder<TrainingSession>()
-            .setQuery(query, TrainingSession::class.java)
-            .build()
-
-        binding.btnStartTraining.setOnClickListener {
-            val intent = Intent(requireContext(), TrainingActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE_TRAINING)
-        }
-
-        adapter = FeedAdapter(options)
+        adapter = FeedAdapter(postagens)
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
 
-        binding.btnStartTraining.setOnClickListener {
-            startActivity(Intent(requireContext(), TrainingActivity::class.java))
-        }
+        buscarPostagens(userId)
 
-        binding.btnPerfil.setOnClickListener {
-            startActivity(Intent(requireContext(), ProfileActivity::class.java))
-        }
+//        val query = FirebaseFirestore.getInstance()
+//            .collection("Pessoa")
+//            .document(FirebaseAuth.getInstance().uid!!)
+//            .collection("Atividade")
+//            .orderBy("timestamp", Query.Direction.DESCENDING)
+//
+//        val options = FirestoreRecyclerOptions.Builder<TrainingSession>()
+//            .setQuery(query, TrainingSession::class.java)
+//            .build()
+//
+//        adapter = FeedAdapter(options)
+//        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+//        binding.recyclerView.adapter = adapter
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_TRAINING && resultCode == Activity.RESULT_OK)
-            atualizarLista()
+    private fun buscarPostagens(userId: String) {
+        postagens.clear()
+
+        FirebaseFirestore.getInstance()
+            .collection("Pessoa")
+            .document(userId)
+            .collection("Atividade")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val postagem = document.toObject(TrainingSession::class.java)
+                    postagens.add(postagem)
+                }
+                adapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                Log.e("FeedFragment", "Erro ao buscar postagens do usuário", e)
+            }
+
+        FirebaseFirestore.getInstance()
+            .collection("Pessoa")
+            .document(userId)
+            .collection("Grupos")
+            .get()
+            .addOnSuccessListener { grupos ->
+                for (grupo in grupos) {
+                    val groupId = grupo.id
+
+                    // Busca as postagens do grupo
+                    FirebaseFirestore.getInstance()
+                        .collection("Grupo")
+                        .document(groupId)
+                        .collection("Atividade")
+                        .orderBy("timestamp", Query.Direction.DESCENDING)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            for (document in result) {
+                                val postagem = document.toObject(TrainingSession::class.java)
+                                postagens.add(postagem)
+                            }
+                            adapter.notifyDataSetChanged()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("FeedFragment", "Erro ao buscar postagens do grupo $groupId", e)
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("FeedFragment", "Erro ao buscar grupos", e)
+            }
     }
 
-    private fun atualizarLista() {
-        adapter.stopListening()
-        adapter.notifyDataSetChanged()
-        adapter.startListening()
-    }
 
-    override fun onStart() {
-        super.onStart()
-        if (::adapter.isInitialized) {
-            adapter.startListening()
-        }
-    }
+//    private fun atualizarLista() {
+//        adapter.stopListening()
+//        adapter.notifyDataSetChanged()
+//        adapter.startListening()
+//    }
 
-    override fun onResume() {
-        super.onResume()
-        atualizarLista()
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        if (::adapter.isInitialized) adapter.startListening()
+//    }
 
-    override fun onStop() {
-        super.onStop()
-        if (::adapter.isInitialized) {
-            adapter.stopListening()
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        atualizarLista()
+//    }
+
+//    override fun onStop() {
+//        super.onStop()
+//        if (::adapter.isInitialized) adapter.stopListening()
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
