@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="br.edu.utfpr.appfitness.fragment.FeedFragment"
+        android:label="Home"/>
+
+    <fragment
+        android:id="@+id/nav_groups"
+        android:name="br.edu.utfpr.appfitness.fragment.GroupFragment"
+        android:label="Grupos"/>
+
+    <fragment
+        android:id="@+id/nav_training"
+        android:name="br.edu.utfpr.appfitness.fragment.TrainingFragment"
+        android:label="Treino"/>
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="br.edu.utfpr.appfitness.fragment.ProfileFragment"
+        android:label="Perfil" />
+
+</navigation>
