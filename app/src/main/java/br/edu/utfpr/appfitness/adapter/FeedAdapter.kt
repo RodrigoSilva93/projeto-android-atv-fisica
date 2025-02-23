@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.edu.utfpr.appfitness.R
 import br.edu.utfpr.appfitness.data.TrainingSession
-import kotlin.math.floor
 
 class FeedAdapter(private val postagens: List<TrainingSession>):
     RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
@@ -39,7 +38,6 @@ class FeedAdapter(private val postagens: List<TrainingSession>):
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val model = postagens[position]
-        Log.d("FeedAdapter", "onBindViewHolder: $model")
 
         if (model.groupName.isNotEmpty()) {
             holder.tvGrupo.text = holder.itemView.context.getString(R.string.session_group, model.userName, model.groupName)

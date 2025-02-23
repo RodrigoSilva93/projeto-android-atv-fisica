@@ -1,27 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/nav_home">
 
     <fragment
         android:id="@+id/nav_home"
         android:name="br.edu.utfpr.appfitness.fragment.FeedFragment"
-        android:label="Home" />
+        android:label="Home"
+        tools:layout="@layout/fragment_feed"/>
 
     <fragment
         android:id="@+id/nav_groups"
-        android:name="br.edu.utfpr.appfitness.fragment.GroupFragment"
-        android:label="Grupos" />
+        android:name="br.edu.utfpr.appfitness.fragment.group.GroupFragment"
+        android:label="Grupos"
+        tools:layout="@layout/fragment_group">
+        <action
+            android:id="@+id/action_groupFragment_to_groupPostsFragment"
+            app:destination="@id/nav_group_posts" />
+        <action
+            android:id="@+id/action_groupFragment_to_createGroupFragment"
+            app:destination="@id/nav_create_group" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_training"
         android:name="br.edu.utfpr.appfitness.fragment.TrainingFragment"
-        android:label="Treino" />
+        android:label="Treino"
+        tools:layout="@layout/fragment_training"/>
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="br.edu.utfpr.appfitness.fragment.ProfileFragment"
-        android:label="Perfil" />
+        android:label="Perfil"
+        tools:layout="@layout/fragment_profile"/>
+
+    <!-- Fragment dos grupos -->
+    <fragment
+        android:id="@+id/nav_group_posts"
+        android:name="br.edu.utfpr.appfitness.fragment.group.GroupPostFragment"
+        android:label="Postagens do Grupo"
+        tools:layout="@layout/fragment_group_post" />
+
+    <fragment
+        android:id="@+id/nav_create_group"
+        android:name="br.edu.utfpr.appfitness.fragment.group.CreateGroupFragment"
+        android:label="Criar Grupo"
+        tools:layout="@layout/fragment_create_group"/>
 
 </navigation>

@@ -61,4 +61,5 @@ dependencies {
     implementation(libs.firebase.ui.firestore)
     implementation(libs.androidx.credentials)
     implementation(libs.firebase.database)
+    implementation(libs.mpandroidchart)
 }

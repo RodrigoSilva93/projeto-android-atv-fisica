@@ -7,15 +7,25 @@
     <!-- TRAINING SESSION CONVERSION -->
     <string name="session_name">%1$s postou:</string>
     <string name="session_group">%1$s postou no grupo %2$s:</string>
+    <string name="session_group_share">%1$s compartilhou o treino:</string>
     <string name="session_duration">Tempo: %1$s</string>
     <string name="session_type">Modalidade: %1$s</string>
     <string name="session_score">Pontos: %1$s</string>
 
-    <string name="treinar">Treinar</string>
+    <!-- BUTTONS -->
+    <string name="entrar">Entrar</string>
+    <string name="excluir_conta">Excluir Conta</string>
+    <string name="confirmar">Confirmar</string>
     <string name="iniciar_exercicio">Iniciar Exercício</string>
+    <string name="parar_exercicio">Parar Exercício</string>
+    <string name="sair">Sair</string>
+
+
+    <string name="treinar">Treinar</string>
+
     <string name="iniciar">Iniciar</string>
     <string name="timer">00:00:00</string>
-    <string name="parar_exercicio">Parar Exercício</string>
+
     <string name="email">Email</string>
     <string name="senha">Senha</string>
     <string name="fitness">Fitness</string>
@@ -25,10 +35,10 @@
     <string name="registrar">Registrar</string>
     <string name="cadastro">Cadastro</string>
     <string name="perfil">Perfil</string>
-    <string name="sair">Sair</string>
-    <string name="excluir_conta">Excluir Conta</string>
+
+
     <string name="dados_pessoais">Dados Pessoais</string>
-    <string name="entrar">Entrar</string>
+
     <string name="registrar_se">Registrar-se</string>
     <string name="editar_perfil">Editar Perfil</string>
     <string name="data_de_nascimento">Data de Nascimento</string>
@@ -40,5 +50,14 @@
     <string name="editar">Editar</string>
     <string name="informacoes_da_conta">Informações da Conta</string>
     <string name="genero">Gênero</string>
+    <string name="adicionar_grupo">Adicionar grupo</string>
+    <string name="descricao">Descrição</string>
+
+    <string name="criar_grupo">Criar grupo</string>
+    <string name="descricao_do_grupo">Descrição do grupo</string>
+    <string name="grupo_publico">Grupo público</string>
+    <string name="nome_do_grupo">Nome do grupo</string>
+    <string name="ranking_do_grupo">Ranking do Grupo</string>
+    <string name="selecione_os_grupos">Selecione os grupos</string>
 
 </resources>

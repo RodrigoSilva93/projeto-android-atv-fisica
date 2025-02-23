@@ -40,20 +40,6 @@ class FeedFragment: Fragment() {
         binding.recyclerView.adapter = adapter
 
         buscarPostagens(userId)
-
-//        val query = FirebaseFirestore.getInstance()
-//            .collection("Pessoa")
-//            .document(FirebaseAuth.getInstance().uid!!)
-//            .collection("Atividade")
-//            .orderBy("timestamp", Query.Direction.DESCENDING)
-//
-//        val options = FirestoreRecyclerOptions.Builder<TrainingSession>()
-//            .setQuery(query, TrainingSession::class.java)
-//            .build()
-//
-//        adapter = FeedAdapter(options)
-//        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-//        binding.recyclerView.adapter = adapter
     }
 
     private fun buscarPostagens(userId: String) {
@@ -108,28 +94,6 @@ class FeedFragment: Fragment() {
                 Log.e("FeedFragment", "Erro ao buscar grupos", e)
             }
     }
-
-
-//    private fun atualizarLista() {
-//        adapter.stopListening()
-//        adapter.notifyDataSetChanged()
-//        adapter.startListening()
-//    }
-
-//    override fun onStart() {
-//        super.onStart()
-//        if (::adapter.isInitialized) adapter.startListening()
-//    }
-
-//    override fun onResume() {
-//        super.onResume()
-//        atualizarLista()
-//    }
-
-//    override fun onStop() {
-//        super.onStop()
-//        if (::adapter.isInitialized) adapter.stopListening()
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
