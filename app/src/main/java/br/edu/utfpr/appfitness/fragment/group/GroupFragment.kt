@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.utfpr.appfitness.R
 import br.edu.utfpr.appfitness.adapter.GroupAdapter
 import br.edu.utfpr.appfitness.data.Group
@@ -37,6 +38,7 @@ class GroupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = GroupAdapter(grupos) { grupo ->
             navController.navigate(R.id.action_groupFragment_to_groupPostsFragment, bundleOf("groupId" to grupo.groupId))
         }

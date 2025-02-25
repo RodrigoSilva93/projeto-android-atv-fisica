@@ -59,5 +59,6 @@
     <string name="nome_do_grupo">Nome do grupo</string>
     <string name="ranking_do_grupo">Ranking do Grupo</string>
     <string name="selecione_os_grupos">Selecione os grupos</string>
+    <string name="ranking_da_semana">Ranking da Semana</string>
 
 </resources>

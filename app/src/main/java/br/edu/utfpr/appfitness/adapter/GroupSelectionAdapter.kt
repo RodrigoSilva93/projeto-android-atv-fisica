@@ -23,19 +23,15 @@ class GroupSelectionAdapter(
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         val grupo = grupos[position]
         holder.bind(grupo, selectedGroups.contains(grupo.groupId))
-        holder.itemView.setOnClickListener {
-            toggleSelection(grupo)
-        }
+        holder.itemView.setOnClickListener { toggleSelection(grupo) }
     }
 
     override fun getItemCount(): Int = grupos.size
 
     private fun toggleSelection(grupo: Group) {
-        if (selectedGroups.contains(grupo.groupId)) {
-            selectedGroups.remove(grupo.groupId)
-        } else {
-            selectedGroups.add(grupo.groupId)
-        }
+        if (selectedGroups.contains(grupo.groupId)) selectedGroups.remove(grupo.groupId)
+        else selectedGroups.add(grupo.groupId)
+
         onGroupSelected(grupo, selectedGroups.contains(grupo.groupId))
         notifyDataSetChanged() // Atualiza a UI
     }

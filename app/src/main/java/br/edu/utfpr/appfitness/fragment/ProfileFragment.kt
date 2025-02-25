@@ -148,9 +148,7 @@ class ProfileFragment : Fragment() {
                 }
 
                 batch.commit()
-                    .addOnSuccessListener {
-                        Log.d("ProfileFragment", "Atividades atualizadas com sucesso.")
-                    }
+                    .addOnSuccessListener { }
                     .addOnFailureListener { e ->
                         Log.e("ProfileFragment", "Erro ao atualizar atividades", e)
                     }
@@ -300,14 +298,23 @@ class ProfileFragment : Fragment() {
                         else {
                             val novosMembros = grupo.membros.toMutableList().apply { remove(userId) }
                             batch.update(document.reference, "membros", novosMembros)
+
+                            //Remove postagens ao excluir a conta
+                            FirebaseFirestore.getInstance().collection("Grupo")
+                                .document(grupoId)
+                                .collection("Atividade")
+                                .whereEqualTo("userId", userId)
+                                .get()
+                                .addOnSuccessListener { activityResult ->
+                                    for (activityDocument in activityResult) {
+                                        batch.delete(activityDocument.reference)
+                                    }
+                                }
                         }
                     }
                 }
                 batch.commit()
-                    .addOnSuccessListener {
-                        Log.d("ProfileFragment", "Usuário removido dos grupos com sucesso.")
-                        onComplete()
-                    }
+                    .addOnSuccessListener { onComplete() }
                     .addOnFailureListener { e ->
                         Log.e("ProfileFragment", "Erro ao remover usuário dos grupos", e)
                         onComplete()

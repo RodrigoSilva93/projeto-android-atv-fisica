@@ -22,6 +22,7 @@ class GroupAdapter(
         private val tvGroupName: TextView = itemView.findViewById(R.id.tvGroupName)
         private val tvGroupDescription: TextView = itemView.findViewById(R.id.tvGroupDescription)
         private val btnJoinGroup: Button = itemView.findViewById(R.id.btnJoinGroup)
+        private val btnLeaveGroup: Button = itemView.findViewById(R.id.btnLeaveGroup)
 
         fun bind(group: Group) {
             tvGroupName.text = group.nome
@@ -30,9 +31,14 @@ class GroupAdapter(
             val userId = FirebaseAuth.getInstance().currentUser?.uid
             val isMember = group.membros.contains(userId)
 
-            if (isMember) btnJoinGroup.visibility = View.GONE
+            if (isMember) {
+                btnJoinGroup.visibility = View.GONE
+                btnLeaveGroup.visibility = View.VISIBLE
+                btnLeaveGroup.setOnClickListener { sairDoGrupo(group.groupId) }
+            }
             else {
                 btnJoinGroup.visibility = View.VISIBLE
+                btnLeaveGroup.visibility = View.GONE
                 btnJoinGroup.setOnClickListener { entrarNoGrupo(group.groupId) }
             }
 
@@ -51,6 +57,38 @@ class GroupAdapter(
                 .addOnFailureListener { e ->
                     Log.e("GroupAdapter", "Erro ao entrar no grupo", e)
                     Toast.makeText(itemView.context, "Erro ao entrar no grupo.", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+        private fun sairDoGrupo(groupId: String) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+            FirebaseFirestore.getInstance().collection("Grupo")
+                .document(groupId)
+                .update("membros", FieldValue.arrayRemove(userId))
+                .addOnSuccessListener {
+                    FirebaseFirestore.getInstance().collection("Grupo")
+                        .document(groupId)
+                        .collection("Atividade")
+                        .whereEqualTo("userId", userId)
+                        .get()
+                        .addOnSuccessListener { result ->
+                            val batch = FirebaseFirestore.getInstance().batch()
+                            for (document in result) {
+                                batch.delete(document.reference)
+                            }
+                            batch.commit()
+                                .addOnSuccessListener {
+                                    Toast.makeText(itemView.context, "Você saiu do grupo.", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("GroupAdapter", "Erro ao remover postagens", e)
+                                }
+                        }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("GroupAdapter", "Erro ao sair do grupo", e)
+                    Toast.makeText(itemView.context, "Erro ao sair do grupo.", Toast.LENGTH_SHORT).show()
                 }
         }
     }

@@ -92,7 +92,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, senha)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d("LOGIN", "Login bem-sucedido: ${auth.currentUser?.email}")
                     Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(this, MainActivity::class.java)
@@ -155,7 +154,6 @@ class LoginActivity : AppCompatActivity() {
                     }
             }
             else -> Log.d("LOGIN", "No ID token!")
-
         }
     }
 }

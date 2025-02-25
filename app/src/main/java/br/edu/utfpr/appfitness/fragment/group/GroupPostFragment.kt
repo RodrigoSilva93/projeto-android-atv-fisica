@@ -1,13 +1,14 @@
 package br.edu.utfpr.appfitness.fragment.group
 
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.utfpr.appfitness.adapter.PostAdapter
 import br.edu.utfpr.appfitness.data.Ranking
@@ -20,6 +21,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Calendar
 
 class GroupPostFragment : Fragment() {
     private var _binding: FragmentGroupPostBinding? = null
@@ -72,8 +74,15 @@ class GroupPostFragment : Fragment() {
         }
 
         val dataSet = BarDataSet(entries, "Pontuação")
-        dataSet.color = Color.BLUE
-        dataSet.valueTextColor = Color.BLACK
+        val colors = if (isDarkTheme(requireContext())) {
+            listOf(Color.CYAN, Color.MAGENTA, Color.YELLOW) // Tema escuro
+        } else listOf(Color.BLUE, Color.GREEN, Color.RED) // Tema claro
+        dataSet.colors = colors
+
+        dataSet.valueTextColor = if (isDarkTheme(requireContext())) {
+            Color.WHITE // Tema escuro
+        } else Color.BLACK // Tema claro
+
         dataSet.valueTextSize = 12f
 
         val barData = BarData(dataSet)
@@ -88,11 +97,22 @@ class GroupPostFragment : Fragment() {
         binding.barChart.xAxis.setDrawGridLines(false)
         binding.barChart.axisLeft.setDrawGridLines(false)
         binding.barChart.axisRight.isEnabled = false
+
+        val textColor = if (isDarkTheme(requireContext())) Color.WHITE else Color.BLACK
+        binding.barChart.xAxis.textColor = textColor
+        binding.barChart.axisLeft.textColor = textColor
+
         binding.barChart.animateY(1000)
         binding.barChart.invalidate() // Atualiza o gráfico
     }
 
+    private fun isDarkTheme(context: Context): Boolean {
+        val flags = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return flags == Configuration.UI_MODE_NIGHT_YES
+    }
+
     private fun carregarRankingDoGrupo(groupId: String) {
+
         FirebaseFirestore.getInstance().collection("Grupo")
             .document(groupId)
             .collection("Atividade")
@@ -105,7 +125,8 @@ class GroupPostFragment : Fragment() {
                     val userName = postagem.userName
                     val pontuacao = postagem.pontuacao
 
-                    if (ranking.containsKey(userName)) ranking[userName] = ranking[userName]!! + pontuacao
+                    if (ranking.containsKey(userName))
+                        ranking[userName] = ranking[userName]!! + pontuacao // soma a pontuação existente
                     else ranking[userName] = pontuacao
                 }
 

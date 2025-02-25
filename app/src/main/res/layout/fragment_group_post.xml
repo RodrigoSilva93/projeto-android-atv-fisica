@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/ranking_do_grupo"
+                android:text="@string/ranking_da_semana"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
