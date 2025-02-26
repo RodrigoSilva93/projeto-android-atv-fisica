@@ -4,7 +4,13 @@
 
     <string name="your_web_client_id">132351541693-kfjvujij2pi17sb88f4sse0nj0lqvms9.apps.googleusercontent.com</string>
 
-    <!-- TRAINING SESSION CONVERSION -->
+    <!-- TITLES -->
+    <string name="fitness">Fitness</string>
+    <string name="cadastro">Cadastro</string>
+    <string name="informacoes_da_conta">Informações da Conta</string>
+    <string name="selecione_os_grupos">Selecione os grupos</string>
+
+    <!-- TRAINING SESSION INPUTS -->
     <string name="session_name">%1$s postou:</string>
     <string name="session_group">%1$s postou no grupo %2$s:</string>
     <string name="session_group_share">%1$s compartilhou o treino:</string>
@@ -16,49 +22,40 @@
     <string name="entrar">Entrar</string>
     <string name="excluir_conta">Excluir Conta</string>
     <string name="confirmar">Confirmar</string>
-    <string name="iniciar_exercicio">Iniciar Exercício</string>
-    <string name="parar_exercicio">Parar Exercício</string>
     <string name="sair">Sair</string>
-
-
-    <string name="treinar">Treinar</string>
-
+    <string name="registrar">Registrar</string>
+    <string name="salvar">Salvar</string>
+    <string name="editar">Editar</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="criar_grupo">Criar grupo</string>
+    <string name="adicionar_grupo">Adicionar grupo</string>
     <string name="iniciar">Iniciar</string>
-    <string name="timer">00:00:00</string>
 
+    <!-- INPUTS -->
     <string name="email">Email</string>
     <string name="senha">Senha</string>
-    <string name="fitness">Fitness</string>
-    <string name="texto_opcao">Ou faça login com uma das opções abaixo:</string>
-    <string name="texto_novo">Novo por aqui? Registre-se.</string>
     <string name="nome">Nome</string>
-    <string name="registrar">Registrar</string>
-    <string name="cadastro">Cadastro</string>
-    <string name="perfil">Perfil</string>
-
-
-    <string name="dados_pessoais">Dados Pessoais</string>
-
-    <string name="registrar_se">Registrar-se</string>
-    <string name="editar_perfil">Editar Perfil</string>
     <string name="data_de_nascimento">Data de Nascimento</string>
-    <string name="salvar">Salvar</string>
+    <string name="nome_do_grupo">Nome do grupo</string>
+    <string name="descricao_do_grupo">Descrição do grupo</string>
+    <string name="grupo_publico">Grupo público</string>
+
+    <!-- BOTTOM NAVIGATION -->
+    <string name="perfil">Perfil</string>
     <string name="home">Home</string>
     <string name="grupos">Grupos</string>
     <string name="treino">Treino</string>
-    <string name="cadastrar">Cadastrar</string>
-    <string name="editar">Editar</string>
-    <string name="informacoes_da_conta">Informações da Conta</string>
-    <string name="genero">Gênero</string>
-    <string name="adicionar_grupo">Adicionar grupo</string>
-    <string name="descricao">Descrição</string>
 
-    <string name="criar_grupo">Criar grupo</string>
-    <string name="descricao_do_grupo">Descrição do grupo</string>
-    <string name="grupo_publico">Grupo público</string>
-    <string name="nome_do_grupo">Nome do grupo</string>
-    <string name="ranking_do_grupo">Ranking do Grupo</string>
-    <string name="selecione_os_grupos">Selecione os grupos</string>
+    <!-- RANKING -->
     <string name="ranking_da_semana">Ranking da Semana</string>
+
+    <!-- LOGIN INFO -->
+    <string name="texto_opcao">Ou faça login com uma das opções abaixo:</string>
+    <string name="texto_novo">Novo por aqui? Registre-se.</string>
+
+    <!-- TIMER -->
+    <string name="timer">00:00:00</string>
+    <string name="parar_exercicio">Parar Exercício</string>
+    <string name="iniciar_exercicio">Iniciar Exercício</string>
 
 </resources>

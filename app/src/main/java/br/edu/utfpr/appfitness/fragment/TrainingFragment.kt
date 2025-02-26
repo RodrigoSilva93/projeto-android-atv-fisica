@@ -51,8 +51,10 @@ class TrainingFragment : Fragment(), SensorEventListener {
     private lateinit var locationManager: LocationManager
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
+            if (_binding == null) return
             locationValues.add(location)
             Log.d("LocationListener", "Nova localização recebida: ${location.latitude}, ${location.longitude}")
+            atualizarDistancia()
         }
         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
             Log.d("LocationListener", "Status do provedor $provider alterado: $status")
@@ -200,6 +202,8 @@ class TrainingFragment : Fragment(), SensorEventListener {
         binding.btnStartStop.text = getString(R.string.iniciar_exercicio)
         handler.removeCallbacks(timerRunnable)
 
+        atualizarDistancia()
+
         AlertDialog.Builder(requireContext())
             .setTitle("Compartilhar treino")
             .setMessage("Deseja compartilhar este treino em um grupo?")
@@ -224,6 +228,20 @@ class TrainingFragment : Fragment(), SensorEventListener {
             binding.tvTimer.text = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes % 60, seconds % 60)
             handler.postDelayed(this, 1000)
         }
+    }
+
+    private fun atualizarDistancia() {
+        if (locationValues.isNotEmpty()) {
+            val distance = calcularDistanciaPercorrida(locationValues)
+
+            if (distance < 1000)
+                binding.tvDistance.text = String.format(Locale.getDefault(), "%.2f m", distance)
+            else {
+                val distanceKm = distance / 1000
+                binding.tvDistance.text = String.format(Locale.getDefault(), " %.2f Km", distanceKm)
+            }
+        }
+        else binding.tvDistance.text = String.format(Locale.getDefault(), "0.0 Km")
     }
 
     private fun calcularPontuacaoNumerica(): Float {
@@ -338,6 +356,7 @@ class TrainingFragment : Fragment(), SensorEventListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        locationManager.removeUpdates(locationListener)
         sensorManager.unregisterListener(this)
     }
 }

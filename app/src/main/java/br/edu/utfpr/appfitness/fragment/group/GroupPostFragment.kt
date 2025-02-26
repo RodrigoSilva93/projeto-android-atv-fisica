@@ -119,20 +119,28 @@ class GroupPostFragment : Fragment() {
             .get()
             .addOnSuccessListener { result ->
                 val ranking = mutableMapOf<String, Float>()
+                val userNames = mutableMapOf<String, String>()
 
                 for (document in result) {
                     val postagem = document.toObject(TrainingSession::class.java)
+                    val userId = postagem.userId
                     val userName = postagem.userName
                     val pontuacao = postagem.pontuacao
 
-                    if (ranking.containsKey(userName))
-                        ranking[userName] = ranking[userName]!! + pontuacao // soma a pontuação existente
-                    else ranking[userName] = pontuacao
+                    if (ranking.containsKey(userId))
+                        ranking[userId] = ranking[userId]!! + pontuacao // soma a pontuação existente
+                    else ranking[userId] = pontuacao
+
+                    userNames[userId] = userName
                 }
 
                 val rankingOrdenado = ranking.entries
                     .sortedByDescending { it.value }
-                    .map { Ranking(it.key, it.value) }
+                    .map { entry ->
+                        val userId = entry.key
+                        val userName = userNames[userId] ?: "Usuário Desconhecido"
+                        Ranking(userName, entry.value)
+                    }
 
                 atualizarGrafico(rankingOrdenado)
             }

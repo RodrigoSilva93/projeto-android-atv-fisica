@@ -6,20 +6,37 @@
     tools:context=".fragment.TrainingFragment">
 
     <TextView
+        android:id="@+id/tvTrainingTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/fitness"
+        android:textSize="34sp" />
+
+    <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="158dp"
         android:text="@string/timer"
         android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="278dp"
+        android:textSize="36sp"/>
 
     <Button
         android:id="@+id/btnStartStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="248dp"
+        android:layout_marginTop="358dp"
         android:text="@string/iniciar" />
 
 </FrameLayout>
